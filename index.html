@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css"><link rel="stylesheet" href="css/L.Control.Locate.min.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script><script src="js/L.Control.Locate.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
+        <script src="data/Indivision_1.js"></script>
+        <script src="data/Propritaires_2.js"></script>
+        <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString') {
+              highlightLayer.setStyle({
+                color: '#ffff00',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: '#ffff00',
+                fillOpacity: 1
+              });
+            }
+            highlightLayer.openPopup();
+        }
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        }).fitBounds([[48.384487840894955,5.771003042075154],[48.40126966678905,5.808268168258583]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        map.createPane('pane_BDortho_0');
+        map.getPane('pane_BDortho_0').style.zIndex = 400;
+        var layer_BDortho_0 = L.tileLayer('https://proxy-ign.openstreetmap.fr/94GjiyqD/bdortho/{z}/{x}/{y}.jpg', {
+            pane: 'pane_BDortho_0',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 19
+        });
+        layer_BDortho_0;
+        map.addLayer(layer_BDortho_0);
+        function pop_Indivision_1(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Commune</th>\
+                        <td>' + (feature.properties['Commune'] !== null ? autolinker.link(feature.properties['Commune'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Numéro</th>\
+                        <td>' + (feature.properties['Numéro'] !== null ? autolinker.link(feature.properties['Numéro'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Propriétaire</th>\
+                        <td>' + (feature.properties['Propriétaire'] !== null ? autolinker.link(feature.properties['Propriétaire'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Section</th>\
+                        <td>' + (feature.properties['Section'] !== null ? autolinker.link(feature.properties['Section'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Surface (HA)</th>\
+                        <td>' + (feature.properties['Surface (HA)'] !== null ? autolinker.link(feature.properties['Surface (HA)'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Indivision_1_0(feature) {
+            switch(String(feature.properties['Propriétaire'])) {
+                case 'Mixte':
+                    return {
+                pane: 'pane_Indivision_1',
+                opacity: 1,
+                color: 'rgba(255,255,255,0.5)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,1,5,0.5)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_Indivision_1');
+        map.getPane('pane_Indivision_1').style.zIndex = 401;
+        map.getPane('pane_Indivision_1').style['mix-blend-mode'] = 'normal';
+        var layer_Indivision_1 = new L.geoJson(json_Indivision_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Indivision_1',
+            layerName: 'layer_Indivision_1',
+            pane: 'pane_Indivision_1',
+            onEachFeature: pop_Indivision_1,
+            style: style_Indivision_1_0,
+        });
+        bounds_group.addLayer(layer_Indivision_1);
+        map.addLayer(layer_Indivision_1);
+        function pop_Propritaires_2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Commune</th>\
+                        <td>' + (feature.properties['Commune'] !== null ? autolinker.link(feature.properties['Commune'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Section</th>\
+                        <td>' + (feature.properties['Section'] !== null ? autolinker.link(feature.properties['Section'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Numéro</th>\
+                        <td>' + (feature.properties['Numéro'] !== null ? autolinker.link(feature.properties['Numéro'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Propriétaire</th>\
+                        <td>' + (feature.properties['Propriétaire'] !== null ? autolinker.link(feature.properties['Propriétaire'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Surface (HA)</th>\
+                        <td>' + (feature.properties['Surface (HA)'] !== null ? autolinker.link(feature.properties['Surface (HA)'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Propritaires_2_0(feature) {
+            switch(String(feature.properties['Propriétaire'])) {
+                case 'Cécilia':
+                    return {
+                pane: 'pane_Propritaires_2',
+                opacity: 1,
+                color: 'rgba(255,255,255,0.5)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(195,87,205,0.5)',
+                interactive: true,
+            }
+                    break;
+                case 'Francine':
+                    return {
+                pane: 'pane_Propritaires_2',
+                opacity: 1,
+                color: 'rgba(255,255,255,0.5)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(69,69,255,0.5)',
+                interactive: true,
+            }
+                    break;
+                case 'Guillaume':
+                    return {
+                pane: 'pane_Propritaires_2',
+                opacity: 1,
+                color: 'rgba(255,255,255,0.5)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,141,1,0.5)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_Propritaires_2');
+        map.getPane('pane_Propritaires_2').style.zIndex = 402;
+        map.getPane('pane_Propritaires_2').style['mix-blend-mode'] = 'normal';
+        var layer_Propritaires_2 = new L.geoJson(json_Propritaires_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Propritaires_2',
+            layerName: 'layer_Propritaires_2',
+            pane: 'pane_Propritaires_2',
+            onEachFeature: pop_Propritaires_2,
+            style: style_Propritaires_2_0,
+        });
+        bounds_group.addLayer(layer_Propritaires_2);
+        map.addLayer(layer_Propritaires_2);
+        var osmGeocoder = new L.Control.Geocoder({
+            collapsed: true,
+            position: 'topleft',
+            text: 'Search',
+            title: 'Testing'
+        }).addTo(map);
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .className += ' fa fa-search';
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .title += 'Search for a place';
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'Propriétaires<br /><table><tr><td style="text-align: center;"><img src="legend/Propritaires_2_Cécilia0.png" /></td><td>Cécilia</td></tr><tr><td style="text-align: center;"><img src="legend/Propritaires_2_Francine1.png" /></td><td>Francine</td></tr><tr><td style="text-align: center;"><img src="legend/Propritaires_2_Guillaume2.png" /></td><td>Guillaume</td></tr></table>': layer_Propritaires_2,'Indivision<br /><table><tr><td style="text-align: center;"><img src="legend/Indivision_1_Mixte0.png" /></td><td>Mixte</td></tr></table>': layer_Indivision_1,"BD ortho": layer_BDortho_0,}).addTo(map);
+        setBounds();
+        resetLabels([layer_Indivision_1,layer_Propritaires_2]);
+        map.on("zoomend", function(){
+            resetLabels([layer_Indivision_1,layer_Propritaires_2]);
+        });
+        map.on("layeradd", function(){
+            resetLabels([layer_Indivision_1,layer_Propritaires_2]);
+        });
+        map.on("layerremove", function(){
+            resetLabels([layer_Indivision_1,layer_Propritaires_2]);
+        });
+        </script>
+    </body>
+</html>
